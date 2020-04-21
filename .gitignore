@@ -2,3 +2,4 @@
 .DS_Store
 app/static/input/uploads/*
 app/static/output/downloads/*
+__pycache__

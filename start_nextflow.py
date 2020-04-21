@@ -7,8 +7,8 @@ from app import app
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler, FileSystemEventHandler
 
-UPLOAD_DIRECTORY = app.config["UPLOADS"]
-DOWNLOAD_DIRECTORY = app.config["DOWNLOADS"]
+UPLOADS = app.config["UPLOADS"]
+DOWNLOADS = app.config["DOWNLOADS"]
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
@@ -16,7 +16,7 @@ class MyHandler(FileSystemEventHandler):
         # # change the path according to the VMs folder structure etc. 
         cwd_path = "/Volumes/clinical_re/ClinVAP_nf-core/nf_core/nf-core-clinvap"
         clinvap = subprocess.run(
-            ['nextflow', 'run', 'main.nf', '--annotated_vcf', os.path.abspath(event.src_path), '--outdir', DOWNLOAD_DIRECTORY, '-profile', 'test,docker'], cwd=cwd_path)
+            ['nextflow', 'run', 'main.nf', '--annotated_vcf', os.path.abspath(event.src_path), '--outdir', DOWNLOADS, '-profile', 'test,docker'], cwd=cwd_path)
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-    path = UPLOAD_DIRECTORY
+    path = UPLOADS
 
     # initialize event handler
     event_handler = MyHandler()
@@ -47,6 +47,3 @@ if __name__ == "__main__":
         observer.stop()
     observer.join()
 
-
-# # Directory needs to change according to VMs file-folder structure
-# DIR = "/Users/bilges/Desktop/abi_tuebingen/clinical_reporting/ClinVAP_app/app/static/input/uploads"
