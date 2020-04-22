@@ -1,5 +1,5 @@
 from app import app
-from flask import Flask, flash, request, redirect, abort, jsonify, send_from_directory, render_template
+from flask import Flask, flash, request, redirect, abort, jsonify, send_from_directory, render_template, make_response
 from werkzeug.utils import secure_filename
 import json
 import os
@@ -65,14 +65,13 @@ def upload_input():
 def download_result(filename):
     """Download a file."""
     try:
+        # tell nginx to server the file and where to find it
         return send_from_directory(DOWNLOADS+"/reports", filename, as_attachment=True)
     except FileNotFoundError:
         abort(404)
 
 
 # Give user the driver gene info 
-# TODO Read JSON result, parse, give the parts
-
 @app.route("/results/<filename>/tables/driver-genes", methods=["GET"])
 def get_driver_genes(filename):
     # check whether filename is given
@@ -81,18 +80,17 @@ def get_driver_genes(filename):
         print("File must have a name")
         return redirect(request.url)
 
-    # create a safe filename
     else:
         try:
             # read in json file
-            full_path = DOWNLOADS + "/reports/" + filename + ".json"
+            full_path = DOWNLOADS + "/reports/" + filename
             with open(full_path) as j:
                 data = json.load(j)
             drivers = data.get("mskdg")
-            return jsonify(drivers)
+            return make_response(jsonify(drivers), 200)
 
         except FileNotFoundError:
-            abort(404)
+            return make_response(jsonify({"error": "File not found"}), 404)
+            # abort(404)
 
     return redirect(request.url)
-    

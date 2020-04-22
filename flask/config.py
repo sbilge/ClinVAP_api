@@ -3,7 +3,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     SESSION_COOKIE_SECURE = True
-    EXTENSIONS = ["json", "vcf", "docx"]
+    EXTENSIONS = ["json", "vcf", "docx", "png"]
     SECRET_KEY = "throw-away-key"
     # UPLOADS = " path/to/the/server"
     # DOWNLOADS = "path/to/the/server"
@@ -13,14 +13,15 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    UPLOADS = "uploads/folder/here"
-    DOWNLOADS = "downloads/folder/here"
-    # SESSION_COOKIE_SECURE = False
+    # UPLOADS = " path/to/uploads"
+    # DOWNLOADS = "path/to/downloads"
+    SESSION_COOKIE_SECURE = False
 
 
 class TestingConfig(Config):
-    TESTING = True
+    # TESTING = True
+    DEBUG = True
     SESSION_COOKIE_SECURE = False
-    # UPLOADS = "path/for/testing"
-    # DOWNLOADS = "path/for/testing"
+    # UPLOADS = " path/to/uploads"
+    # DOWNLOADS = "path/to/downloads"
 

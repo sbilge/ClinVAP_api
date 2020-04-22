@@ -3,12 +3,11 @@ import time
 import logging
 import os
 import subprocess
-from app import app
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler, FileSystemEventHandler
 
-UPLOADS = app.config["UPLOADS"]
-DOWNLOADS = app.config["DOWNLOADS"]
+UPLOADS = "/Users/bilges/Desktop/abi_tuebingen/clinical_reporting/ClinVAP_app/flask/app/static/input/uploads"
+DOWNLOADS = "/Users/bilges/Desktop/abi_tuebingen/clinical_reporting/ClinVAP_app/flask/app/static/output/downloads"
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
