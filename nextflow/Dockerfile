@@ -2,9 +2,6 @@ FROM continuumio/miniconda3:4.8.2
 
 LABEL maintainer="bilge.sueruen@uni-tuebingen.de"
 
-# Add Watchdog module to conda base for start_nextflow.py script
-RUN conda install -y -c conda-forge watchdog=0.10.2
-
 # install some required packages including java 
 RUN mkdir -p /usr/share/man/man1
 
@@ -31,8 +28,8 @@ RUN mkdir /nextflow_pipeline/work
 WORKDIR /nextflow_pipeline
 
 # Copy nextflow start script and make it executable
-COPY start_nextflow.py .
-RUN chmod +x start_nextflow.py
+COPY start_nextflow.py /usr/bin
+RUN chmod +x /usr/bin/start_nextflow.py
 
 # Clone conda branch of nextflow pipeline
 RUN git clone --single-branch --branch conda https://github.com/sbilge/nf-core-clinvap.git
