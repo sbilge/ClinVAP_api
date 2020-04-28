@@ -3,3 +3,7 @@
 flask/app/static/input/uploads/*
 flask/app/static/output/downloads/*
 __pycache__
+nextflow/download
+nextflow/work
+nextflow/upload
+nextflow/nextflow_conda_test.md

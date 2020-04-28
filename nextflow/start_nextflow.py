@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import time
 import logging
@@ -6,16 +7,18 @@ import subprocess
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler, FileSystemEventHandler
 
-UPLOADS = "/Users/bilges/Desktop/abi_tuebingen/clinical_reporting/ClinVAP_app/flask/app/static/input/uploads"
-DOWNLOADS = "/Users/bilges/Desktop/abi_tuebingen/clinical_reporting/ClinVAP_app/flask/app/static/output/downloads"
+
+# for docker test
+UPLOADS = "/nextflow_pipeline/uploads"
+DOWNLOADS = "/nextflow_pipeline/downloads"
+NEXTFLOW_FOLDER = "/nextflow_pipeline/nf-core-clinvap"
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
         # # call nextflow on new vcf file
         # # change the path according to the VMs folder structure etc. 
-        cwd_path = "/Volumes/clinical_re/ClinVAP_nf-core/nf_core/nf-core-clinvap"
         clinvap = subprocess.run(
-            ['nextflow', 'run', 'main.nf', '--annotated_vcf', os.path.abspath(event.src_path), '--outdir', DOWNLOADS, '-profile', 'test,docker'], cwd=cwd_path)
+            ['nextflow', 'run', 'main.nf', '--annotated_vcf', os.path.abspath(event.src_path), '--outdir', DOWNLOADS, '-profile', 'test'], cwd=NEXTFLOW_FOLDER)
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))

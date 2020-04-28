@@ -11,6 +11,9 @@ services:
             - FLASK_ENV=development
         expose:
             - 8080
+        volumes:
+            - clinvap_uploads:/app/app/static/input/uploads
+            - clinvap_downloads:/app/app/static/output/downloads
 
     nginx:
         build: ./nginx
@@ -18,3 +21,17 @@ services:
         restart: always
         ports:
             - "80:80"
+
+    nextflow:
+        build: ./nextflow
+        container_name: nextflow
+        volumes:
+            - ./work:/nextflow_pipeline/work
+            - clinvap_uploads:/nextflow_pipeline/uploads
+            - clinvap_downloads:/nextflow_pipeline/downloads
+        depends_on:
+            - flask
+            - nginx
+volumes:
+    clinvap_uploads:
+    clinvap_downloads:
