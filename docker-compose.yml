@@ -3,7 +3,8 @@ version: "3.7"
 services:
 
     flask:
-        build: ./flask
+        image: bilges/clinvap_api_flask
+        # build: ./flask
         container_name: flask
         restart: always
         environment:
@@ -16,14 +17,16 @@ services:
             - clinvap_downloads:/app/app/static/output/downloads
 
     nginx:
-        build: ./nginx
+        image: bilges/clinvap_api_nginx
+        # build: ./nginx
         container_name: nginx
         restart: always
         ports:
             - "80:80"
 
     nextflow:
-        build: ./nextflow
+        image: bilges/clinvap_api_nextflow
+        # build: ./nextflow
         container_name: nextflow
         volumes:
             - ./work:/nextflow_pipeline/work
