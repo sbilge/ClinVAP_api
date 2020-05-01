@@ -24,7 +24,7 @@ class MyHandler(FileSystemEventHandler):
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))
-        # print(app.config["UPLOADS"])
+        # print(app.config["UPLOADS"]) 
 
 
 if __name__ == "__main__":
@@ -50,4 +50,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
-
