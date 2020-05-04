@@ -12,6 +12,7 @@ from watchdog.events import LoggingEventHandler, FileSystemEventHandler
 UPLOADS = "/nextflow_pipeline/uploads"
 DOWNLOADS = "/nextflow_pipeline/downloads"
 NEXTFLOW_FOLDER = "/nextflow_pipeline/nf-core-clinvap"
+WORK_DIR = "/nextflow_pipeline/work"
 
 genome_assembly = sys.argv[1]
 
@@ -20,7 +21,7 @@ class MyHandler(FileSystemEventHandler):
         # # call nextflow on new vcf file
         # # change the path according to the VMs folder structure etc. 
         clinvap = subprocess.run(
-            ['nextflow', 'run', 'main.nf', '--vcf', os.path.abspath(event.src_path), '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
+            ['nextflow', 'run', 'main.nf', '-w', WORK_DIR, '--vcf', os.path.abspath(event.src_path), '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))
