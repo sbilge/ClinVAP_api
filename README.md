@@ -6,7 +6,7 @@
 ## ClinVAP REST API
 
 1. Clone the repository  
-`git clone --single-branch --branch master https://github.com/sbilge/ClinVAP_api.git`
+`git clone --single-branch --branch clinvap-api-dev https://github.com/sbilge/ClinVAP_api.git`
 
 2. Change directory into ClinVAP_api  
 `cd ClinVAP_api`
