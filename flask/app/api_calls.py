@@ -2,6 +2,7 @@ from app import app
 from flask import Flask, flash, request, redirect, abort, jsonify, send_from_directory, render_template, make_response
 from werkzeug.utils import secure_filename
 import json
+import time
 import os
 
 
@@ -15,8 +16,9 @@ if not os.path.exists(UPLOADS):
 if not os.path.exists(DOWNLOADS):
     os.makedirs(DOWNLOADS)
 
-# function to restric file extensions
+
 def file_extension_check(filename):
+    """Function to restric file extensions"""
     if not "." in filename:
         return False
     ext = os.path.splitext(filename)[1].lower().strip(".")
@@ -25,9 +27,18 @@ def file_extension_check(filename):
     else:
         return False
 
+
+def tail_log(filename):
+    filename.seek(0,2)
+    while True:
+        line = filename.readline()
+        if not line:
+            time.sleep(0.1)
+            continue
+        yield line
+
 # Get input from the user
 # TODO Check and limit filesize
-
 @app.route("/upload-input", methods=["GET", "POST"])
 def upload_input():
     """Upload a file."""
@@ -56,6 +67,23 @@ def upload_input():
                 print("File is saved")
                 return redirect(request.url)
     return render_template("upload_input.html")
+
+# Give status of report generation process to user
+
+@app.route("/status", methods=["GET"])
+def get_status():
+    try:
+        logfile_path = os.path.join(DOWNLOADS, ".nextflow.log")
+        logfile = open(logfile_path, "r")
+        loglines = tail_log(logfile)
+        for line in loglines:
+            if "Execution complete -- Goodbye" in line:
+                status = "Finished"
+            else:
+                status = "Running"
+        return make_response(jsonify({"Status": status}), 200)
+    except FileNotFoundError:
+        return make_response(jsonify({"error": "Log file not found"}), 404)
 
 
 # TODO if there is a file not found error, check whether nextflow is still running on that file or not
