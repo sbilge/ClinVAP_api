@@ -1,7 +1,8 @@
 from app import app
-from flask import Flask, flash, request, redirect, abort, jsonify, send_from_directory, render_template, make_response
+from flask import Flask, flash, request, redirect, abort, jsonify, send_from_directory, render_template, make_response, Response
 from werkzeug.utils import secure_filename
 import json
+import time
 import os
 
 
@@ -15,8 +16,9 @@ if not os.path.exists(UPLOADS):
 if not os.path.exists(DOWNLOADS):
     os.makedirs(DOWNLOADS)
 
-# function to restric file extensions
+
 def file_extension_check(filename):
+    """Function to restric file extensions"""
     if not "." in filename:
         return False
     ext = os.path.splitext(filename)[1].lower().strip(".")
@@ -25,9 +27,9 @@ def file_extension_check(filename):
     else:
         return False
 
+
 # Get input from the user
 # TODO Check and limit filesize
-
 @app.route("/upload-input", methods=["GET", "POST"])
 def upload_input():
     """Upload a file."""
@@ -58,8 +60,40 @@ def upload_input():
     return render_template("upload_input.html")
 
 
+# Give status of report generation process to user
+
+@app.route("/results/<filename>/status", methods=["GET"])
+def get_status(filename):
+    # Function to tail log file starting from the beginning.
+    # It stops tailing once it gets the execution complete line.
+    def tail_log(log_filename):
+        log_filename.seek(0, 1)
+        while True:
+            line = log_filename.readline()
+            if not line:
+                time.sleep(0.1)
+                continue
+            if "Execution complete -- Goodbye" in line:
+                status = "Finished"
+                yield status + '\n'
+                break
+            else:
+                status = "Running"
+            yield status + '\n'
+
+    try:
+        logfile_path = os.path.join(DOWNLOADS, filename + ".log")
+        logfile = open(logfile_path, "r")
+        return Response(tail_log(logfile), mimetype='text/plain')
+        # return make_response(jsonify({"Status": status}), 200)
+    except FileNotFoundError:
+        return make_response(jsonify({"error": "Log file not found"}), 404)
+
+    return redirect(request.url)
+
 # TODO if there is a file not found error, check whether nextflow is still running on that file or not
 # Give resulting file to the user
+
 
 @app.route("/results/<path:filename>", methods=["GET"])
 def download_result(filename):
@@ -68,10 +102,13 @@ def download_result(filename):
         # tell nginx to server the file and where to find it
         return send_from_directory(DOWNLOADS+"/reports", filename, as_attachment=True)
     except FileNotFoundError:
-        abort(404)
+        return make_response(jsonify({"error": "File not found"}), 404)
+
+    return redirect(request.url)
+
+# Give user the driver gene info
 
 
-# Give user the driver gene info 
 @app.route("/results/<filename>/tables/driver-genes", methods=["GET"])
 def get_driver_genes(filename):
     # check whether filename is given

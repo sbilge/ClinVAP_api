@@ -18,10 +18,13 @@ genome_assembly = sys.argv[1]
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
-        # # call nextflow on new vcf file
-        # # change the path according to the VMs folder structure etc. 
+        # Custom name generation for nextflow log file
+        name = os.path.basename(event.src_path) + ".log"
+        log = os.path.join(DOWNLOADS, name)
+
+        # call nextflow on new vcf file
         clinvap = subprocess.run(
-            ['nextflow', 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', os.path.abspath(event.src_path), '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
+            ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))
