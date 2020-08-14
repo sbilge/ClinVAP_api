@@ -7,7 +7,7 @@ class Config(object):
     SECRET_KEY = "throw-away-key"
     UPLOADS = "/app/app/static/input/uploads"
     DOWNLOADS = "/app/app/static/output/downloads"
-
+  
 
 class ProductionConfig(Config):
     pass
