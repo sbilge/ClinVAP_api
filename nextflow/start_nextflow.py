@@ -3,6 +3,7 @@ import sys
 import time
 import logging
 import os
+import json
 import subprocess
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler, FileSystemEventHandler
@@ -12,16 +13,37 @@ from watchdog.events import LoggingEventHandler, FileSystemEventHandler
 UPLOADS = "/nextflow_pipeline/uploads"
 DOWNLOADS = "/nextflow_pipeline/downloads"
 NEXTFLOW_FOLDER = "/nextflow_pipeline/nf-core-clinvap"
+NF_CONF = "nextflow_pipeline/clinvap_conf"
 WORK_DIR = "/nextflow_pipeline/work"
 
-genome_assembly = sys.argv[1]
 
 class MyHandler(FileSystemEventHandler):
+
+
     def on_created(self, event):
-        # # call nextflow on new vcf file
-        # # change the path according to the VMs folder structure etc. 
+        # call nextflow on new vcf file
+
+        # Set custom filename for log file
         name = os.path.basename(event.src_path) + ".log"
         log = os.path.join(DOWNLOADS, name)
+
+        # Get pipeline parameters
+        conf = os.path.join(NF_CONF, ".conf.txt")
+
+        for i in range(3):
+            try:
+                with open(conf, "r") as nf_conf:
+                    values = json.load(nf_conf)
+                genome_assembly = values["assembly"]
+                break
+            except IOError:
+                if i !=2:
+                    time.sleep(30)
+                    continue
+                else:
+                    sys.exit("Problems in loading arguments")
+
+
         clinvap = subprocess.run(
             ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
 

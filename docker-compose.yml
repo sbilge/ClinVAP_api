@@ -14,6 +14,7 @@ services:
             - 8080
         volumes:
             - clinvap_uploads:/app/app/static/input/uploads
+            - clinvap_conf:/app/app/static/input/nf_conf
             - clinvap_downloads:/app/app/static/output/downloads
 
     nginx:
@@ -25,17 +26,18 @@ services:
             - "80:80"
 
     nextflow:
-        image: bilges/clinvap_api_nextflow:dev
+        image: bilges/clinvap_api_nextflow
         # build: ./nextflow
         container_name: nextflow
         command: GRCh37
         volumes:
-            - ./work:/nextflow_pipeline/work
             - clinvap_uploads:/nextflow_pipeline/uploads
             - clinvap_downloads:/nextflow_pipeline/downloads
+            - clinvap_conf:nextflow_pipeline/clinvap_conf
         depends_on:
             - flask
             - nginx
 volumes:
     clinvap_uploads:
     clinvap_downloads:
+    clinvap_conf:
