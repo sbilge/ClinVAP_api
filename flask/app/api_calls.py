@@ -44,7 +44,7 @@ def upload_input():
         elif assembly not in ["GRCh37", "GRCh38"]:
             return make_response(jsonify({"error": "Assembly version is not valid"}), 422)
         with open(os.path.join(NF_CONF, ".conf.txt"), "w") as conf:
-            conf.write("assembly: {}".format(assembly))
+            json.dump({"assembly": assembly}, conf, indent=4)
 
         if request.files:
             vcf = request.files["vcf"]

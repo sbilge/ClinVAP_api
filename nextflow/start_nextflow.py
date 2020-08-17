@@ -12,15 +12,33 @@ from watchdog.events import LoggingEventHandler, FileSystemEventHandler
 UPLOADS = "/nextflow_pipeline/uploads"
 DOWNLOADS = "/nextflow_pipeline/downloads"
 NEXTFLOW_FOLDER = "/nextflow_pipeline/nf-core-clinvap"
+NF_CONF = "nextflow_pipeline/clinvap_conf"
 WORK_DIR = "/nextflow_pipeline/work"
 
-genome_assembly = sys.argv[1]
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
-        # Custom name generation for nextflow log file
+    
+        # # Set custom filename for log file
         name = os.path.basename(event.src_path) + ".log"
         log = os.path.join(DOWNLOADS, name)
+
+        # Get pipeline parameters
+        conf = os.path.join(NF_CONF, ".conf.txt")
+
+        for i in range(3):
+            try:
+                with open(conf, "r") as nf_conf:
+                    values = json.load(nf_conf)
+                genome_assembly = values["assembly"]
+                break
+            except IOError:
+                if i != 2:
+                    time.sleep(30)
+                    continue
+                else:
+                    sys.exit("Problems in loading arguments")
+                    
 
         # call nextflow on new vcf file
         clinvap = subprocess.run(
