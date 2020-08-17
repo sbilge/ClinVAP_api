@@ -87,14 +87,17 @@ def get_status(filename):
                 continue
             if "Execution complete -- Goodbye" in line:
                 status = "Finished"
+                yield status + '\n'
+                break
             else:
                 status = "Running"
             yield status + '\n'
+            time.sleep(1)
 
     try:
         logfile_path = os.path.join(DOWNLOADS, filename + ".log")
         logfile = open(logfile_path, "r")
-        return Response(tail_log(logfile), mimetype='text/plain')
+        return app.response_class(tail_log(logfile), mimetype='text/plain')
         # return make_response(jsonify({"Status": status}), 200)
     except FileNotFoundError:
         return make_response(jsonify({"error": "Log file not found"}), 404)
