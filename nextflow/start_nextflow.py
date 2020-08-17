@@ -13,7 +13,7 @@ from watchdog.events import LoggingEventHandler, FileSystemEventHandler
 UPLOADS = "/nextflow_pipeline/uploads"
 DOWNLOADS = "/nextflow_pipeline/downloads"
 NEXTFLOW_FOLDER = "/nextflow_pipeline/nf-core-clinvap"
-NF_CONF = "nextflow_pipeline/clinvap_conf"
+NF_CONF = "/nextflow_pipeline/clinvap_conf"
 WORK_DIR = "/nextflow_pipeline/work"
 
 
