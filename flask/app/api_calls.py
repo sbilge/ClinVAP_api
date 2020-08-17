@@ -9,6 +9,7 @@ import os
 UPLOADS = app.config["UPLOADS"]
 DOWNLOADS = app.config["DOWNLOADS"]
 EXTENSIONS = app.config["EXTENSIONS"]
+NF_CONF = app.config["NF_CONF"]
 
 if not os.path.exists(UPLOADS):
     os.makedirs(UPLOADS)
@@ -16,6 +17,8 @@ if not os.path.exists(UPLOADS):
 if not os.path.exists(DOWNLOADS):
     os.makedirs(DOWNLOADS)
 
+if not os.path.exists(NF_CONF):
+    os.makedirs(NF_CONF)
 
 def file_extension_check(filename):
     """Function to restric file extensions"""
@@ -34,6 +37,14 @@ def file_extension_check(filename):
 def upload_input():
     """Upload a file."""
     if request.method == "POST":
+
+        assembly = request.form.get("assembly")
+        if not assembly: 
+            assembly = "GRCh37" # if None, assign default value
+        elif assembly not in ["GRCh37", "GRCh38"]:
+            return make_response(jsonify({"error": "Assembly version is not valid"}), 422)
+        with open(os.path.join(NF_CONF, ".conf.txt"), "w") as conf:
+            conf.write("assembly: {}".format(assembly))
 
         if request.files:
             vcf = request.files["vcf"]
