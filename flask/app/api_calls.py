@@ -92,7 +92,6 @@ def get_status(filename):
             else:
                 status = "Running"
             yield status + '\n'
-            time.sleep(1)
 
     try:
         logfile_path = os.path.join(DOWNLOADS, filename + ".log")
