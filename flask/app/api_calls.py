@@ -87,8 +87,6 @@ def get_status(filename):
                 continue
             if "Execution complete -- Goodbye" in line:
                 status = "Finished"
-                yield status + '\n'
-                break
             else:
                 status = "Running"
             yield status + '\n'
