@@ -99,7 +99,7 @@ def get_status(filename):
         return app.response_class(tail_log(logfile), mimetype='text/plain')
         # return make_response(jsonify({"Status": status}), 200)
     except FileNotFoundError:
-        return make_response(jsonify({"error": "Log file not found"}), 404)
+        return Response(stream_with_context(tail_log(logfile)), mimetype='text/plain')
 
     return redirect(request.url)
 
