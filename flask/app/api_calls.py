@@ -1,5 +1,5 @@
 from app import app
-from flask import Flask, flash, request, redirect, abort, jsonify, send_from_directory, render_template, make_response, Response
+from flask import Flask, flash, request, redirect, abort, jsonify, send_from_directory, render_template, make_response, Response, stream_with_context
 from werkzeug.utils import secure_filename
 import json
 import time
@@ -95,7 +95,7 @@ def get_status(filename):
     try:
         logfile_path = os.path.join(DOWNLOADS, filename + ".log")
         logfile = open(logfile_path, "r")
-        return Response(tail_log(logfile), mimetype='text/plain')
+        return Response(stream_with_context(tail_log(logfile)), mimetype='text/plain')
         # return make_response(jsonify({"Status": status}), 200)
     except FileNotFoundError:
         return make_response(jsonify({"error": "Log file not found"}), 404)
