@@ -76,28 +76,16 @@ def upload_input():
 
 @app.route("/results/<filename>/status", methods=["GET"])
 def get_status(filename):
-    # Function to tail log file starting from the beginning.
-    # It stops tailing once it gets the execution complete line.
-    def tail_log(log_filename):
-        log_filename.seek(0, 1)
-        while True:
-            line = log_filename.readline()
-            if not line:
-                time.sleep(0.1)
-                continue
-            if "Execution complete -- Goodbye" in line:
-                status = "Finished"
-                yield status + '\n'
-                break
-            else:
-                status = "Running"
-            yield status + '\n'
-
     try:
         logfile_path = os.path.join(DOWNLOADS, filename + ".log")
-        logfile = open(logfile_path, "r")
-        return Response(tail_log(logfile), mimetype='text/event-stream')
-        # return make_response(jsonify({"Status": status}), 200)
+        with open(logfile_path, 'r') as f:
+            lines = f.read().splitlines()
+            last_line = lines[-1]
+            if "Execution complete -- Goodbye" in last_line:
+                status = "Finished"
+            else:
+                status = "Running"
+        return make_response(jsonify({"Status": status}), 200)
     except FileNotFoundError:
         return make_response(jsonify({"error": "Log file not found"}), 404)
 
