@@ -96,10 +96,10 @@ def get_status(filename):
     try:
         logfile_path = os.path.join(DOWNLOADS, filename + ".log")
         logfile = open(logfile_path, "r")
-        return app.response_class(tail_log(logfile), mimetype='text/plain')
+        return Response(tail_log(logfile), content_type='text/event-stream')
         # return make_response(jsonify({"Status": status}), 200)
     except FileNotFoundError:
-        return Response(stream_with_context(tail_log(logfile)), mimetype='text/plain')
+        return make_response(jsonify({"error": "Log file not found"}), 404)
 
     return redirect(request.url)
 
