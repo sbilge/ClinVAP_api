@@ -19,17 +19,22 @@
 	4.1. Upload VCF file  
 `localhost/upload-input`
 
-	4.2. Download output  
+    4.2. Check the status
+`localhost/results/<filename>/status`
+
+    E.g if the uploaded file name was *test.vcf*, use ***test.vcf*** as `<filename>`.
+
+	4.3. Download output  
 `localhost/results/<filename>`
 
 	`<filename>` extention should either be *.JSON* to download JSON file or *.DOCX*  to download Word file.
 
 	E.g if the uploaded file name was *text.vcf*, use ***test.json*** or ***test.docx*** as `<filename>`.
 
-	4.3. Get list of driver genes  
-	`localhost/results/<filename>/tables/driver-genes`
+	4.4. Get list of driver genes   
+`localhost/results/<filename>/tables/driver-genes`
 	
-	E.g if the uploaded file name was *text.vcf*, use ***test.json*** as `<filename>`.
+	E.g if the uploaded file name was *test.vcf*, use ***test.json*** as `<filename>`.
 
 	For detailed API documentation, see [API Documentation](#API Documentation)
 
