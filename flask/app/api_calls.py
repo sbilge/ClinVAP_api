@@ -91,9 +91,7 @@ def get_status(filename):
 
     return redirect(request.url)
 
-# TODO if there is a file not found error, check whether nextflow is still running on that file or not
 # Give resulting file to the user
-
 
 @app.route("/results/<path:filename>", methods=["GET"])
 def download_result(filename):
