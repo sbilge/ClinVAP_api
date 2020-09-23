@@ -81,7 +81,9 @@ def get_status(filename):
         with open(logfile_path, 'r') as f:
             lines = f.read().splitlines()
             last_line = lines[-1]
-            if "Execution complete -- Goodbye" in last_line:
+            if "ERROR" in lines:
+                status = "Failed"
+            elif "Execution complete -- Goodbye" in last_line:
                 status = "Finished"
             else:
                 status = "Running"
