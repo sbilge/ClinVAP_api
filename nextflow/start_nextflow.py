@@ -45,7 +45,18 @@ class MyHandler(FileSystemEventHandler):
 
 
         clinvap = subprocess.run(
-            ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
+            ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+        
+        try:
+            if clinvap.returncode == 0:
+                print("Pipeline is finished. Deleting VCF.")
+                os.remove(event.src_path)
+        except subprocess.CalledProcessError:
+            print("Pipeline failed. Deleting VCF")
+            os.remove(event.src_path)
+
+        
+
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))
