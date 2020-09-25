@@ -44,10 +44,10 @@ class MyHandler(FileSystemEventHandler):
                     sys.exit("Problems in loading arguments")
 
 
-        clinvap = subprocess.run(
-            ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
-        
         try:
+            clinvap = subprocess.run(
+                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+
             if clinvap.returncode == 0:
                 print("Pipeline is finished. Deleting VCF.")
                 os.remove(event.src_path)
