@@ -82,16 +82,21 @@ def get_status(filename):
             last_line = lines[-1]
             if "ERROR" in lines:
                 status = "Failed"
-            elif "Execution complete -- Goodbye" in last_line:
-                status = "Finished"
             else:
-                status = "Running"
-        return make_response(jsonify({"Status": status}), 200)
+                status = "Success"
+            if "Execution complete -- Goodbye" in last_line:
+                status_2 = "Finished"
+            else:
+                status_2 = "Running"
+        if status_2 == "Running":
+            status_report = "Running"
+        else:
+            status_report = {status, status_2}
+        return make_response(jsonify({"Status": status_report}), 200)
     except FileNotFoundError:
         return make_response(jsonify({"error": "Log file not found"}), 404)
 
     return redirect(request.url)
-
 
 # Give resulting file to the user
 

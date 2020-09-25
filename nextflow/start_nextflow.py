@@ -40,10 +40,18 @@ class MyHandler(FileSystemEventHandler):
                 else:
                     sys.exit("Problems in loading arguments")
                     
+        try:
+            # call nextflow on new vcf file
+            clinvap = subprocess.run(
+                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
+            if clinvap.returncode == 0:
+                print("Pipeline is finished. Deleting VCF.")
+                os.remove(event.src_path)
+        except subprocess.CalledProcessError:
+            print("Pipeline failed. Deleting VCF")
+            os.remove(event.src_path)
 
-        # call nextflow on new vcf file
-        clinvap = subprocess.run(
-            ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
+
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))
