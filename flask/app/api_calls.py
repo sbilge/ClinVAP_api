@@ -87,12 +87,10 @@ def get_status(filename):
                 status = "Success"
             if "Execution complete -- Goodbye" in last_line:
                 status_2 = "Finished"
+                status_report = status + ',' + status_2
             else:
                 status_2 = "Running"
-            if status_2 == "Running":
-                status_report = "Running"
-            else:
-                status_report = status + ',' + status_2
+                status_report = status_2
         return make_response(jsonify({"Status": status_report}), 200)
     except FileNotFoundError:
         return make_response(jsonify({"error": "Log file not found"}), 404)
