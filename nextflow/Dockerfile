@@ -32,7 +32,7 @@ COPY start_nextflow.py /usr/bin
 RUN chmod +x /usr/bin/start_nextflow.py
 
 # Clone conda branch of nextflow pipeline
-RUN git clone --single-branch --branch conda-dev https://github.com/sbilge/nf-core-clinvap.git
+RUN git clone --single-branch --branch conda https://github.com/sbilge/nf-core-clinvap.git
 
 # Create conda env
 RUN conda env create -f nf-core-clinvap/environment.yml && conda clean -a
