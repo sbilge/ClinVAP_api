@@ -43,7 +43,7 @@ class MyHandler(FileSystemEventHandler):
         try:
             # call nextflow on new vcf file
             clinvap = subprocess.run(
-                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER)
+                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
             if clinvap.returncode == 0:
                 print("Pipeline is finished. Deleting VCF.")
                 os.remove(event.src_path)
