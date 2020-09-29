@@ -126,7 +126,7 @@ def get_driver_genes(filename):
             full_path = DOWNLOADS + "/reports/" + filename
             with open(full_path) as j:
                 data = json.load(j)
-            drivers = data.get("mskdg")
+            drivers = data.get("driver_table")
             return make_response(jsonify(drivers), 200)
 
         except FileNotFoundError:
