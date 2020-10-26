@@ -38,15 +38,30 @@ def file_extension_check(filename):
 def upload_input():
     """Upload a file."""
     if request.method == "POST":
-
+        
+        # get assembly version from user
         assembly = request.form.get("assembly")
         if not assembly:
             assembly = "GRCh37"  # if None, assign default value
         elif assembly not in ["GRCh37", "GRCh38"]:
             return make_response(jsonify({"error": "Assembly version is not valid"}), 422)
-        with open(os.path.join(NF_CONF, ".conf.txt"), "w") as conf:
-            json.dump({"assembly": assembly}, conf, indent=4)
 
+        # get diagnosis based filter from user
+        d_filter = request.form.get("filter")
+        if not d_filter:
+            d_filter = "sort" # default value for diagnosis based filter
+
+        # get icd10 from user
+        icd10 = request.form.get("icd10")
+        if not icd10:
+            icd10 = ""  # default value is empty string
+        
+        # write parameters to config file
+        with open(os.path.join(NF_CONF, ".conf.txt"), "w") as conf:
+            json.dump({"assembly": assembly, "filter": d_filter, "icd10": icd10}, conf, indent=4)
+        
+
+        # get vcf file from user
         if request.files:
             vcf = request.files["vcf"]
 
