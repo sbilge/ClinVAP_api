@@ -38,9 +38,9 @@ class MyHandler(FileSystemEventHandler):
                 d_filter = values["filter"]
                 icd10 = values["icd10"]
                 # Create metadata file, put it in NF_CONF
-                metadata = NF_CONF+"/.metadata.json"
-                with open(metadata, "w") as metadata:
-                    json.dump({"do_name": "", "doid": "","icd10": icd10}, metadata, indent=4)
+                metadata = os.path.join(NF_CONF, ".metadata.json")
+                with open(metadata, "w") as metadata_file:
+                    json.dump({"do_name": "", "doid": "","icd10": icd10}, metadata_file, indent=4)
                 break
             except IOError:
                 if i !=2:
