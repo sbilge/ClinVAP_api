@@ -51,24 +51,33 @@ class MyHandler(FileSystemEventHandler):
 
 
         try:
-            clinvap = subprocess.run(
-                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--metadata_json', metadata, '--diagnosis_filter_option', d_filter, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+            cnv_name = os.path.splitext(os.path.basename(event.src_path)) + ".tsv"
+            print(cnv_name)
+            cnv_path = os.path.join(NF_CONF, cnv_name)
+            print(cnv_path)
+            if not os.path.isfile(cnv_path):
+                clinvap = subprocess.run(
+                    ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--metadata_json', metadata, '--diagnosis_filter_option', d_filter, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+            else:
+                print("cnv_exits")
+                clinvap = subprocess.run(
+                    ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'true', '--annotated_vcf', event.src_path, '--cnv', cnv_path, '--metadata_json', metadata, '--diagnosis_filter_option', d_filter, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
 
             if clinvap.returncode == 0:
                 print("Pipeline is finished. Deleting VCF.")
                 os.remove(event.src_path)
                 os.remove(metadata)
+                os.remove(cnv_path)
         except subprocess.CalledProcessError:
             print("Pipeline failed. Deleting VCF")
             os.remove(event.src_path)
             os.remove(metadata)
+            os.remove(cnv_path)
 
-        
 
+        print(event.event_type)
+        print(os.path.splitext(os.path.basename(event.src_path)))
 
-        # print(event.event_type)
-        # print(os.path.abspath(event.src_path))
-        # print(app.config["UPLOADS"]) 
 
 
 if __name__ == "__main__":
