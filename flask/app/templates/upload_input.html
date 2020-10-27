@@ -14,10 +14,18 @@
             <form action="/upload-input" method="POST" enctype="multipart/form-data">
 
                 <div class="form-group">
-                    <label>Select file</label>
+                    <label>Select somatic variants VCF file</label>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" name="vcf" id="vcf">
                         <label class="custom-file-label" for="vcf">Select file...</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Select copy number variants TSV file</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" name="cnv" id="cnv">
+                        <label class="custom-file-label" for="cnv">Select file...</label>
                     </div>
                 </div>
 

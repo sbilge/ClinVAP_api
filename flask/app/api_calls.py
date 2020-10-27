@@ -8,7 +8,8 @@ import os
 
 UPLOADS = app.config["UPLOADS"]
 DOWNLOADS = app.config["DOWNLOADS"]
-EXTENSIONS = app.config["EXTENSIONS"]
+EXTENSION_SOMATIC = app.config["EXTENSION_SOMATIC"]
+EXTENSION_CNV = app.config["EXTENSION_CNV"]
 NF_CONF = app.config["NF_CONF"]
 
 if not os.path.exists(UPLOADS):
@@ -21,12 +22,12 @@ if not os.path.exists(NF_CONF):
     os.makedirs(NF_CONF)
 
 
-def file_extension_check(filename):
+def file_extension_check(filename, extension_list):
     """Function to restric file extensions"""
     if not "." in filename:
         return False
     ext = os.path.splitext(filename)[1].lower().strip(".")
-    if ext in EXTENSIONS:
+    if ext in extension_list:
         return True
     else:
         return False
@@ -38,52 +39,75 @@ def file_extension_check(filename):
 def upload_input():
     """Upload a file."""
     if request.method == "POST":
-        
-        # get assembly version from user
-        assembly = request.form.get("assembly")
-        if not assembly:
-            assembly = "GRCh37"  # if None, assign default value
-        elif assembly not in ["GRCh37", "GRCh38"]:
-            return make_response(jsonify({"error": "Assembly version is not valid"}), 422)
 
-        # get diagnosis based filter from user
-        d_filter = request.form.get("filter")
-        if not d_filter:
-            d_filter = "sort" # default value for diagnosis based filter
-
-        # get icd10 from user
-        icd10 = request.form.get("icd10")
-        if not icd10:
-            icd10 = ""  # default value is empty string
-        
-        # write parameters to config file
-        with open(os.path.join(NF_CONF, ".conf.txt"), "w") as conf:
-            json.dump({"assembly": assembly, "filter": d_filter, "icd10": icd10}, conf, indent=4)
-        
+        vcf_flag = False
 
         # get vcf file from user
         if request.files:
             vcf = request.files["vcf"]
+            cnv = request.files["cnv"]
 
-            # check whether file has a name
+            # Check whether VCF file has a name
             if vcf.filename == "":
                 flash("File must have a name", "warning")
                 print("File must have a name")
                 return redirect(request.url)
 
-            # Check file extension
-            if not file_extension_check(vcf.filename):
+            # Check VCF file extension
+            if not file_extension_check(vcf.filename, EXTENSION_SOMATIC):
                 flash("File extension is not allowed", "warning")
                 print("File extension is not allowed")
                 return redirect(request.url)
 
-            # create a safe filename
+            # Create a safe filename for VCF
             else:
                 filename = secure_filename(vcf.filename)
                 vcf.save(os.path.join(UPLOADS, filename))
+                vcf_flag = True
                 flash("File is saved", "success")
                 print("File is saved")
-                return redirect(request.url)
+
+            # Check whether CNV file has a name
+            if cnv.filename == "":
+                flash("CNV is not provided.")
+                print("CNV is not provided.")
+            
+            # Check CNV file extension
+            if not file_extension_check(cnv.filename, EXTENSION_CNV):
+                flash("CNV file extension is not allowed", "warning")
+                print("CNV file extension is not allowed")
+            
+            # Create a safe name for CNV file
+            else:
+                cnv_filename = secure_filename(cnv.filename)
+                cnv.save(os.path.join(NF_CONF, cnv_filename))
+                flash("CNV file is saved")
+                print("CNV file is saved")
+
+        if vcf_flag:
+
+            # get assembly version from user
+            assembly = request.form.get("assembly")
+            if not assembly:
+                assembly = "GRCh37"  # if None, assign default value
+            elif assembly not in ["GRCh37", "GRCh38"]:
+                return make_response(jsonify({"error": "Assembly version is not valid"}), 422)
+
+            # get diagnosis based filter from user
+            d_filter = request.form.get("filter")
+            if not d_filter:
+                d_filter = "sort"  # default value for diagnosis based filter
+            
+            # get icd10 from user
+            icd10 = request.form.get("icd10")
+            if not icd10:
+                icd10 = ""  # default value is empty string
+
+            # write parameters to config file
+            with open(os.path.join(NF_CONF, ".conf.txt"), "w") as conf:
+                json.dump({"assembly": assembly, "filter": d_filter, "icd10": icd10}, conf, indent=4)
+
+        return redirect(request.url)
     return render_template("upload_input.html")
 
 
