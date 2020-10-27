@@ -3,7 +3,8 @@ class Config(object):
     DEBUG = False
     TESTING = False
     SESSION_COOKIE_SECURE = True
-    EXTENSIONS = ["json", "vcf", "docx"]
+    EXTENSION_SOMATIC = ["json", "vcf"]
+    EXTENSION_CNV = ["json", "tsv"]
     SECRET_KEY = "throw-away-key"
     UPLOADS = "/app/app/static/input/uploads"
     DOWNLOADS = "/app/app/static/output/downloads"
