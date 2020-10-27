@@ -32,6 +32,12 @@ class MyHandler(FileSystemEventHandler):
                 with open(conf, "r") as nf_conf:
                     values = json.load(nf_conf)
                 genome_assembly = values["assembly"]
+                d_filter = values["filter"]
+                icd10 = values["icd10"]
+                # Create metadata file, put it in NF_CONF
+                metadata = os.path.join(NF_CONF, ".metadata.json")
+                with open(metadata, "w") as metadata_file:
+                    json.dump({"do_name": "", "doid": "", "icd10": icd10}, metadata_file, indent=4)
                 break
             except IOError:
                 if i != 2:
@@ -43,13 +49,15 @@ class MyHandler(FileSystemEventHandler):
         try:
             # call nextflow on new vcf file
             clinvap = subprocess.run(
-                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--metadata_json', metadata, '--diagnosis_filter_option', d_filter, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
             if clinvap.returncode == 0:
                 print("Pipeline is finished. Deleting VCF.")
                 os.remove(event.src_path)
+                os.remove(metadata)
         except subprocess.CalledProcessError:
             print("Pipeline failed. Deleting VCF")
             os.remove(event.src_path)
+            os.remove(metadata)
 
 
 
