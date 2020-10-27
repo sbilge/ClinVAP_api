@@ -136,7 +136,7 @@ def get_status(filename):
 
     return redirect(request.url)
 
-# Give resulting file to the user
+# Give resulting file(s) to the user
 
 @app.route("/results/<path:filename>", methods=["GET"])
 def download_result(filename):
@@ -149,9 +149,8 @@ def download_result(filename):
 
     return redirect(request.url)
 
+
 # Give user the driver gene info
-
-
 @app.route("/results/<filename>/tables/driver-genes", methods=["GET"])
 def get_driver_genes(filename):
     # check whether filename is given
