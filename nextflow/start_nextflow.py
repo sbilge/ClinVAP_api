@@ -47,23 +47,30 @@ class MyHandler(FileSystemEventHandler):
                     sys.exit("Problems in loading arguments")
                     
         try:
-            # call nextflow on new vcf file
-            clinvap = subprocess.run(
-                ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--metadata_json', metadata, '--diagnosis_filter_option', d_filter, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+            cnv_name = os.path.splitext(os.path.basename(event.src_path))[0] + ".tsv"
+            cnv_path = os.path.join(NF_CONF, cnv_name)
+            if not os.path.isfile(cnv_path):
+                # call nextflow on new vcf file
+                clinvap = subprocess.run(
+                    ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--metadata_json', metadata, '--diagnosis_filter_option', d_filter, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+            else:
+                clinvap = subprocess.run(
+                    ['nextflow', '-log', log, 'run', 'main.nf', '-w', WORK_DIR, '--skip_vep', 'false', '--vcf', event.src_path, '--cnv', cnv_path, '--metadata_json', metadata, '--diagnosis_filter_option', d_filter, '--genome', genome_assembly, '--outdir', DOWNLOADS, '-profile', 'parameters'], cwd=NEXTFLOW_FOLDER, check=True)
+
             if clinvap.returncode == 0:
                 print("Pipeline is finished. Deleting VCF.")
                 os.remove(event.src_path)
                 os.remove(metadata)
+                os.remove(cnv_path)
         except subprocess.CalledProcessError:
             print("Pipeline failed. Deleting VCF")
             os.remove(event.src_path)
             os.remove(metadata)
-
+            os.remove(cnv_path)
 
 
         # print(event.event_type)
         # print(os.path.abspath(event.src_path))
-        # print(app.config["UPLOADS"]) 
 
 
 if __name__ == "__main__":

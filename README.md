@@ -16,7 +16,7 @@
 
 4. Connect to localhost
 
-	4.1. Upload VCF file  
+	4.1. Upload input(s): VCF file, list of copy number variants (optional), genome assembly version (default is GRCh37), diagnosis (optional), filtering option based on diagnosis (optional)
 `localhost/upload-input`
 
     4.2. Check the status
@@ -27,11 +27,18 @@
 	4.3. Download output  
 `localhost/results/<filename>`
 
-	`<filename>` extention should either be *.JSON* to download JSON file or *.DOCX*  to download Word file.
+	`<filename>` extention should be *.JSON* to download JSON file.
 
-	E.g if the uploaded file name was *text.vcf*, use ***test.json*** or ***test.docx*** as `<filename>`.
+	E.g if the uploaded file name was *text.vcf*, use ***test.json***.
 
-	4.4. Get list of driver genes   
+    4.4.  Download CNV output (output is generated if CNV list is provided as input)
+`localhost/results/<filename>`
+
+	`<filename>` extention should be *cnv.JSON* to download JSON file.
+
+	E.g if the uploaded file name was *text.vcf*, use ***test.cnv.json***.
+
+	4.5. Get list of driver genes   
 `localhost/results/<filename>/tables/driver-genes`
 	
 	E.g if the uploaded file name was *test.vcf*, use ***test.json*** as `<filename>`.
