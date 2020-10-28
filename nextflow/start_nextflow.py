@@ -51,7 +51,7 @@ class MyHandler(FileSystemEventHandler):
 
 
         try:
-            cnv_name = os.path.splitext(os.path.basename(event.src_path)) + ".tsv"
+            cnv_name = os.path.splitext(os.path.basename(event.src_path))[0] + ".tsv"
             print(cnv_name)
             cnv_path = os.path.join(NF_CONF, cnv_name)
             print(cnv_path)
@@ -73,10 +73,6 @@ class MyHandler(FileSystemEventHandler):
             os.remove(event.src_path)
             os.remove(metadata)
             os.remove(cnv_path)
-
-
-        print(event.event_type)
-        print(os.path.splitext(os.path.basename(event.src_path)))
 
 
 
