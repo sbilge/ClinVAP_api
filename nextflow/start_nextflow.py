@@ -67,12 +67,14 @@ class MyHandler(FileSystemEventHandler):
                 print("Pipeline is finished. Deleting VCF.")
                 os.remove(event.src_path)
                 os.remove(metadata)
-                os.remove(cnv_path)
+                if os.path.isfile(cnv_path):
+                    os.remove(cnv_path)
         except subprocess.CalledProcessError:
             print("Pipeline failed. Deleting VCF")
             os.remove(event.src_path)
             os.remove(metadata)
-            os.remove(cnv_path)
+            if os.path.isfile(cnv_path):
+                os.remove(cnv_path)
 
 
 

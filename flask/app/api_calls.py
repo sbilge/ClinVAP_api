@@ -73,7 +73,7 @@ def upload_input():
                 print("CNV is not provided.")
             
             # Check CNV file extension
-            if not file_extension_check(cnv.filename, EXTENSION_CNV):
+            elif not file_extension_check(cnv.filename, EXTENSION_CNV):
                 flash("CNV file extension is not allowed", "warning")
                 print("CNV file extension is not allowed")
             
