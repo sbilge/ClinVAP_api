@@ -42,7 +42,7 @@ class MyHandler(FileSystemEventHandler):
                 with open(metadata, "w") as metadata_file:
                     json.dump({"do_name": "", "doid": "","icd10": icd10}, metadata_file, indent=4)
                 break
-            except IOError:
+            except (IOError, json.JSONDecodeError):
                 if i !=2:
                     time.sleep(30)
                     continue
