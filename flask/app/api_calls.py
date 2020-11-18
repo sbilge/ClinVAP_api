@@ -71,12 +71,12 @@ def upload_input():
             if cnv.filename == "":
                 flash("CNV is not provided.")
                 print("CNV is not provided.")
-
+            
             # Check CNV file extension
-            if not file_extension_check(cnv.filename, EXTENSION_CNV):
+            elif not file_extension_check(cnv.filename, EXTENSION_CNV):
                 flash("CNV file extension is not allowed", "warning")
                 print("CNV file extension is not allowed")
-
+            
             # Create a safe name for CNV file
             else:
                 cnv_filename = secure_filename(cnv.filename)
@@ -97,7 +97,7 @@ def upload_input():
             d_filter = request.form.get("filter")
             if not d_filter:
                 d_filter = "sort"  # default value for diagnosis based filter
-
+            
             # get icd10 from user
             icd10 = request.form.get("icd10")
             if not icd10:
@@ -105,8 +105,7 @@ def upload_input():
 
             # write parameters to config file
             with open(os.path.join(NF_CONF, ".conf.txt"), "w") as conf:
-                json.dump({"assembly": assembly, "filter": d_filter,
-                           "icd10": icd10}, conf, indent=4)
+                json.dump({"assembly": assembly, "filter": d_filter, "icd10": icd10}, conf, indent=4)
 
         return redirect(request.url)
     return render_template("upload_input.html")
@@ -138,7 +137,6 @@ def get_status(filename):
     return redirect(request.url)
 
 # Give resulting file(s) to the user
-
 
 @app.route("/results/<path:filename>", methods=["GET"])
 def download_result(filename):

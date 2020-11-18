@@ -4,6 +4,7 @@ import time
 import logging
 import json
 import os
+import json
 import subprocess
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler, FileSystemEventHandler
@@ -18,9 +19,12 @@ WORK_DIR = "/nextflow_pipeline/work"
 
 
 class MyHandler(FileSystemEventHandler):
+
+
     def on_created(self, event):
-    
-        # # Set custom filename for log file
+        # call nextflow on new vcf file
+
+        # Set custom filename for log file
         name = os.path.basename(event.src_path) + ".log"
         log = os.path.join(DOWNLOADS, name)
 
@@ -37,10 +41,10 @@ class MyHandler(FileSystemEventHandler):
                 # Create metadata file, put it in NF_CONF
                 metadata = os.path.join(NF_CONF, ".metadata.json")
                 with open(metadata, "w") as metadata_file:
-                    json.dump({"do_name": "", "doid": "", "icd10": icd10}, metadata_file, indent=4)
+                    json.dump({"do_name": "", "doid": "","icd10": icd10}, metadata_file, indent=4)
                 break
-            except IOError:
-                if i != 2:
+            except (IOError, json.JSONDecodeError):
+                if i !=2:
                     time.sleep(30)
                     continue
                 else:
@@ -61,16 +65,15 @@ class MyHandler(FileSystemEventHandler):
                 print("Pipeline is finished. Deleting VCF.")
                 os.remove(event.src_path)
                 os.remove(metadata)
-                os.remove(cnv_path)
+                if os.path.isfile(cnv_path):
+                    os.remove(cnv_path)
         except subprocess.CalledProcessError:
             print("Pipeline failed. Deleting VCF")
             os.remove(event.src_path)
             os.remove(metadata)
-            os.remove(cnv_path)
+            if os.path.isfile(cnv_path):
+                os.remove(cnv_path)
 
-
-        # print(event.event_type)
-        # print(os.path.abspath(event.src_path))
 
 
 if __name__ == "__main__":

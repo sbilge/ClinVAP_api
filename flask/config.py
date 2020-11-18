@@ -22,6 +22,7 @@ class DevelopmentConfig(Config):
     SESSION_COOKIE_SECURE = False
 
 
+
 class TestingConfig(Config):
     # TESTING = True
     DEBUG = True

@@ -1,6 +1,6 @@
 *.pyc
 .DS_Store
-flask/app/static/*
+flask/app/static/input*
 __pycache__
 nextflow/download
 nextflow/work

@@ -6,7 +6,7 @@
 ## ClinVAP REST API
 
 1. Clone the repository  
-`git clone --single-branch --branch master https://github.com/sbilge/ClinVAP_api.git`
+`git clone --single-branch --branch clinvap-api-dev https://github.com/sbilge/ClinVAP_api.git`
 
 2. Change directory into ClinVAP_api  
 `cd ClinVAP_api`
@@ -16,7 +16,7 @@
 
 4. Connect to localhost
 
-	4.1. Upload input(s): VCF file, list of copy number variants (optional), genome assembly version (default is GRCh37), diagnosis (optional), filtering option based on diagnosis (optional)
+	4.1. Upload input(s): VCF file, list of copy number variants (optional), genome assembly version (default is GRCh37), diagnosis (optional), filtering option based on diagnosis (optional) 
 `localhost/upload-input`
 
     4.2. Check the status
@@ -24,14 +24,14 @@
 
     E.g if the uploaded file name was *test.vcf*, use ***test.vcf*** as `<filename>`.
 
-	4.3. Download output  
+	4.3. Download SNV output
 `localhost/results/<filename>`
 
 	`<filename>` extention should be *.JSON* to download JSON file.
 
 	E.g if the uploaded file name was *text.vcf*, use ***test.json***.
 
-    4.4.  Download CNV output (output is generated if CNV list is provided as input)
+    4.4. Download CNV output (output is generated if CNV list is provided as input)
 `localhost/results/<filename>`
 
 	`<filename>` extention should be *cnv.JSON* to download JSON file.
