@@ -6,48 +6,53 @@
 ## ClinVAP REST API
 
 1. Clone the repository  
-`git clone --single-branch --branch clinvap-api-dev https://github.com/sbilge/ClinVAP_api.git`
+`git clone --single-branch --branch master https://github.com/sbilge/ClinVAP_api.git`
 
 2. Change directory into ClinVAP_api  
 `cd ClinVAP_api`
 
-3. Start application via  
+3. Copy Ensembl VEP files to volume via
+
+    * If you need human genome assembly GRCh37, use: `docker run -v clinvap_downloads:/mnt bilges/clinvap_file_deploy:vP_GRCh37`
+    * If you need human genome assembly GRCh38, use: `docker run -v clinvap_downloads:/mnt bilges/clinvap_file_deploy:vP_GRCh38`
+
+4. Start application via  
 `docker-compose up`
 
-4. Connect to localhost
+5. Connect to localhost
 
-	4.1. Upload input(s): VCF file, list of copy number variants (optional), genome assembly version (default is GRCh37), diagnosis (optional), filtering option based on diagnosis (optional) 
-`localhost/upload-input`
+	5.1. Upload input(s): VCF file, list of copy number variants (optional), genome assembly version (default is GRCh37), diagnosis (optional), filtering option based on diagnosis (optional) 
+    `localhost/upload-input`   
 
-    4.2. Check the status
-`localhost/results/<filename>/status`
+    5.2. Check the status
+    `localhost/results/<filename>/status`
 
-    E.g if the uploaded file name was *test.vcf*, use ***test.vcf*** as `<filename>`.
+        E.g if the uploaded file name was *test.vcf*, use ***test.vcf*** as `<filename>`.
 
-	4.3. Download SNV output
-`localhost/results/<filename>`
+	5.3. Download SNV output
+    `localhost/results/<filename>`
 
-	`<filename>` extention should be *.JSON* to download JSON file.
+	    `<filename>` extention should be *.JSON* to download JSON file.
 
-	E.g if the uploaded file name was *text.vcf*, use ***test.json***.
+	    E.g if the uploaded file name was *text.vcf*, use ***test.json***.
 
-    4.4. Download CNV output (output is generated if CNV list is provided as input)
-`localhost/results/<filename>`
+    5.4. Download CNV output (output is generated if CNV list is provided as input)
+    `localhost/results/<filename>`
 
-	`<filename>` extention should be *cnv.JSON* to download JSON file.
+	    `<filename>` extention should be *cnv.JSON* to download JSON file.
 
-	E.g if the uploaded file name was *text.vcf*, use ***test.cnv.json***.
+	    E.g if the uploaded file name was *text.vcf*, use ***test.cnv.json***.
 
-	4.5. Get list of driver genes   
-`localhost/results/<filename>/tables/driver-genes`
+	5.5. Get list of driver genes   
+    `localhost/results/<filename>/tables/driver-genes`
 	
-	E.g if the uploaded file name was *test.vcf*, use ***test.json*** as `<filename>`.
+	    E.g if the uploaded file name was *test.vcf*, use ***test.json*** as `<filename>`.
 
-	For detailed API documentation, see [API Documentation](#API Documentation)
+	    For detailed API documentation, see [API Documentation](#API Documentation)
 
-5. Terminate the application via `CTRL+C`
+6. Terminate the application via `CTRL+C`
 
-6. To remove containers after terminating the application:  
+7. To remove containers after terminating the application:  
 `docker-compose down`
 
 ### API Documentation <a name="API Documentation"></a>

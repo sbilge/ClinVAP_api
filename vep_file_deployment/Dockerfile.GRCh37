@@ -1,0 +1,24 @@
+FROM ensemblorg/ensembl-vep:release_95.0
+
+LABEL \
+    author = "Bilge Surun" \ 
+    description = "VEP file deployment for its usage in PeCaX" \
+    maintainer="sueruen@informatik.uni-tuebingen.de"
+
+USER root
+RUN apt-get -y update && \
+    apt-get -y upgrade && \
+    apt-get install -y wget && \
+    apt-get clean -y
+
+USER vep
+WORKDIR $OPT/src/ensembl-vep
+RUN ./INSTALL.pl -n --CACHE_VERSION 95 --CACHEDIR './offline_cache' --VERSION 95 -a cf -s homo_sapiens -y GRCh37 --NO_BIOPERL --NO_HTSLIB --NO_TEST --NO_UPDATE
+
+WORKDIR /opt/vep
+RUN wget https://raw.githubusercontent.com/Ensembl/VEP_plugins/release/90/LoFtool_scores.txt
+
+USER root
+COPY copy_data.sh /opt/vep
+RUN chmod +x copy_data.sh
+ENTRYPOINT [ "/opt/vep/copy_data.sh" ]
